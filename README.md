@@ -1,5 +1,5 @@
 # Práctica de Minería de Datos: Clustering y Reducción de Dimensionalidad sobre MNIST
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Python](https://img.shields.io/badge/python-3.14%2B-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 Este repositorio contiene una implementación completa en Python utilizando Jupyter Notebook para la asignatura de **Minería de Datos**. El proyecto aborda un problema clásico de aprendizaje automático no supervisado: agrupar y clasificar sin etiquetas previas las imágenes de dígitos escritos a mano del dataset **MNIST**.
