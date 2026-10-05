@@ -1,3 +1,5 @@
+[🇬🇧 English](README.md) | [🇪🇸 Español](README.es.md)
+
 # MNIST Unsupervised Clustering & Latent Space Analysis Pipeline
 
 <p align="center">
@@ -11,135 +13,134 @@
 
 ---
 
-## 📌 Resumen Ejecutivo
+## 📌 Executive Summary
 
-**MNIST Unsupervised Clustering & Latent Space Analysis** es un proyecto de investigación experimental y aprendizaje no supervisado sobre el dataset de dígitos manuscritos **MNIST (784 dimensiones)**. 
+**MNIST Unsupervised Clustering & Latent Space Analysis** is an experimental benchmarking pipeline focused on unsupervised representation learning over high-dimensional image data (**MNIST 784 dimensions**).
 
-El pipeline aborda el reto de descubrir, estructurar y evaluar agrupamientos naturales en datos de alta dimensionalidad sin supervisión de etiquetas durante el entrenamiento. Combina técnicas de **Reducción de Dimensionalidad (PCA)**, **K-Means**, modelos probabilísticos de mezcla gaussiana (**GMM**) y optimización combinatoria sobre grafos bipartitos mediante el **Algoritmo Húngaro (Kuhn-Munkres)** para resolver la correspondencia óptima clúster-clase y evaluar la pureza latente.
+The pipeline addresses the core challenge of discovering natural cluster geometry without label supervision during training. It integrates **Principal Component Analysis (PCA)** for spectral dimensionality reduction, **K-Means Clustering**, **Gaussian Mixture Models (GMM)**, and combinatorial bipartite matching via the **Hungarian Algorithm (Kuhn-Munkres)** to solve the unsupervised class-to-cluster correspondence problem and evaluate true latent partition purity.
 
 ---
 
-## 🔬 Metodología Experimental y Resultados Visuales
+## 🔬 Experimental Methodology & Visual Results
 
-### 1. Exploración y Preparación de Datos (EDA)
-Descarga automatizada del dataset `mnist_784` desde OpenML, normalización al rango $[0, 1]$ para estabilidad numérica y partición estratificada con un conjunto de prueba independiente de 10.000 muestras para evitar fugas de datos.
+### 1. Exploratory Data Analysis & Preprocessing (EDA)
+Automated ingestion of `mnist_784` from OpenML, pixel normalization to $[0, 1]$ for numeric stability, and stratified partitioning with an independent 10,000-sample test set to prevent data leakage.
 
 <p align="center">
-  <img src="assets/eda_digits_sample.png" width="650" alt="Muestras de dígitos MNIST"/>
+  <img src="assets/eda_digits_sample.png" width="650" alt="MNIST Digit Samples"/>
   <br>
-  <em>Figura 1: Muestras representativas del espacio de píxeles tras normalización.</em>
+  <em>Figure 1: Representative digit samples across normalized pixel space.</em>
 </p>
 
 ---
 
-### 2. Reducción de Dimensionalidad con PCA
-Se evaluó el impacto de la compresión espectral sobre diferentes tamaños de dimensión latente: $d \in [10, 20, 40, 60, 100, 150, 784]$.
-* **Hallazgo:** Proyectar a $d \in [40, 60]$ dimensiones retiene más del 85% de la varianza explicada, filtrando ruido de alta frecuencia en los bordes de los píxeles y acelerando la convergencia de K-Means en más de un 90% respecto al espacio original de 784 dimensiones.
+### 2. Spectral Dimensionality Reduction with PCA
+Evaluated spectral variance retention across latent subspace dimensions: $d \in [10, 20, 40, 60, 100, 150, 784]$.
+* **Finding:** Projecting onto $d \in [40, 60]$ dimensions retains over 85% of cumulative explained variance, filtering high-frequency boundary noise and accelerating K-Means convergence by over 90% compared to the raw 784-dimensional space.
 
 ---
 
-### 3. Barrido de Clústeres ($K$) y Generalización Train-Test
-Se ejecutaron barridos hiperparamétricos de $K \in [8, 30]$ analizando métricas de validación intrínsecas (Coeficiente de Silueta e Índice de Calinski-Harabasz) junto a la precisión de correspondencia (*Class-to-Cluster Accuracy*):
+### 3. Hyperparameter Sweeps ($K$) & Generalization
+Systematic sweeps of $K \in [8, 30]$ evaluated against intrinsic clustering metrics (Silhouette Coefficient and Calinski-Harabasz Index) alongside bipartite Class-to-Cluster Accuracy:
 
 <p align="center">
-  <img src="assets/accuracy_vs_k.png" width="700" alt="Evolución de Accuracy frente a K"/>
+  <img src="assets/accuracy_vs_k.png" width="700" alt="Accuracy evolution across K"/>
   <br>
-  <em>Figura 2: Consistencia entre curvas de entrenamiento y prueba a medida que incrementa K.</em>
+  <em>Figure 2: Consistent generalization between Train and Test accuracy curves as K increases.</em>
 </p>
 
 ---
 
-### 4. Alineación mediante Algoritmo Húngaro y Análisis de Confusión
-Dado que el clustering no supervisado asigna identificadores arbitrarios a cada partición, se implementa el **Algoritmo Húngaro** (`linear_sum_assignment`) sobre la matriz de contingencia cruzada para resolver la asignación biunívoca de coste mínimo:
+### 4. Optimal Hungarian Alignment & Confusion Heatmaps
+Because unsupervised clustering assigns arbitrary permutation IDs to discovered clusters, the **Hungarian Algorithm** (`scipy.optimize.linear_sum_assignment`) is applied over the contingency cross-matrix to resolve the minimum-cost one-to-one class assignment:
 
 <p align="center">
-  <img src="assets/confusion_matrix_k10.png" width="460" alt="Matriz de Confusión K=10"/>
+  <img src="assets/confusion_matrix_k10.png" width="460" alt="Confusion Matrix K=10"/>
   &nbsp;&nbsp;
-  <img src="assets/heatmap_best_k.png" width="460" alt="Heatmap K Óptimo"/>
+  <img src="assets/heatmap_best_k.png" width="460" alt="Heatmap Best K"/>
   <br>
-  <em>Figura 3: Matriz de confusión para K=10 (izq.) y descomposición por clases dominantes para K óptimo (der.).</em>
+  <em>Figure 3: Confusion matrix for K=10 (left) and dominant-class decomposition for optimal K (right).</em>
 </p>
 
 ---
 
-### 5. Proyección del Espacio Latente en 2D
-Visualización comparativa de las primeras dos componentes principales, contrastando las particiones descubiertas por K-Means contra las clases reales del dataset:
+### 5. 2D Latent Space Projection
+Comparative visualization of the first two principal components, contrasting unsupervised K-Means partitions against true ground-truth class labels:
 
 <p align="center">
-  <img src="assets/pca_2d_clusters.png" width="800" alt="Proyección PCA 2D"/>
+  <img src="assets/pca_2d_clusters.png" width="800" alt="PCA 2D Projection"/>
   <br>
-  <em>Figura 4: Separación de densidades en el plano latente PCA 2D (Clusters vs Clases Reales).</em>
+  <em>Figure 4: Latent density separation in 2D PCA subspace (Discovered Clusters vs True Classes).</em>
 </p>
 
 ---
 
-## 💡 Hallazgos Clave e Interpretación de Datos
+## 💡 Key Analytical Insights & Findings
 
-1. **El fenómeno del sub-clustering ($K > 10$):**
-   Aunque existen 10 clases reales (dígitos del 0 al 9), incrementar $K$ hacia 20 o 30 eleva notablemente la precisión del alineamiento. Esto se debe a que K-Means asume clústeres esféricos e isótropos; los dígitos manuscritos presentan **distribuciones multimodales** según el estilo tipográfico (por ejemplo: el '7' europeo con barra horizontal frente al '7' americano continuo, o el '1' recto frente al '1' con serifa inclinada). Permitir múltiples sub-clústeres por dígito incrementa la pureza de cada partición.
-2. **Fronteras de ambigüedad topológica:**
-   El análisis de confusión muestra que los mayores solapamientos ocurren entre los pares **(4, 9)** y **(3, 5)**. En el espacio latente reducido, la morfología de trazo cerrado vs abierto genera solapamientos densos que justifican el uso de modelos probabilísticos como **GMM**.
-3. **Inferencia Out-of-Sample sin Data Leakage:**
-   El pipeline implementa una función de inferencia (`predict_new_instance`) que proyecta nuevas imágenes utilizando estrictamente los transformadores ajustados previamente en la fase de entrenamiento, garantizando portabilidad hacia entornos productivos.
+1. **The Sub-Clustering Dynamic ($K > 10$):**
+   Although ground-truth labels consist of 10 digits (0 to 9), increasing $K$ to 20 or 30 significantly improves cluster purity and accuracy. K-Means operates under spherical, isotropic assumptions, whereas handwritten digits naturally exhibit **multimodal geometric distributions** based on human typographic style (e.g., European '7' with crossbar vs American continuous '7', or slanted '1' vs vertical bar '1'). Sub-clustering allows the algorithm to fit distinct Voronoi cells per style without forcing heterogeneous writing styles into a single centroid.
+2. **Topological Ambiguity Boundaries:**
+   Confusion matrices demonstrate that primary cluster overlap occurs between homologous stroke topologies: **(4, 9)** and **(3, 5)**. In reduced latent space, stroke closure ambiguity produces continuous density distributions that motivate probabilistic approaches like **GMM**.
+3. **Out-of-Sample Inference without Data Leakage:**
+   The codebase provides an inference module (`src/inference.py` / `predict_new_instance`) that projects unseen test samples strictly using pre-fitted transformations, demonstrating production readiness.
 
 ---
 
-## 🏗️ Estructura del Repositorio
+## 🏗️ Repository Structure
 
 ```text
 MNIST_Clustering/
-├── assets/                    # Figuras y visualizaciones extraídas del pipeline
+├── assets/                    # Experimental charts and figures
 │   ├── accuracy_vs_k.png
 │   ├── confusion_matrix_k10.png
 │   ├── eda_digits_sample.png
 │   ├── heatmap_best_k.png
 │   └── pca_2d_clusters.png
-├── src/                       # Módulos Python reutilizables
+├── src/                       # Production inference modules
 │   ├── __init__.py
-│   └── inference.py           # Algoritmo Húngaro y predicción de nuevas instancias
-├── notebook.ipynb             # Notebook interactivo de experimentación completa
-├── requirements.txt           # Dependencias reproducibles del entorno
-├── .gitignore                 # Reglas de exclusión de Git
-└── LICENSE                    # Licencia MIT
+│   └── inference.py           # Hungarian alignment & out-of-sample predictor
+├── notebook.ipynb             # Interactive end-to-end experimental notebook
+├── requirements.txt           # Reproducible dependencies manifest
+├── .gitignore                 # Clean Git exclusions
+└── LICENSE                    # MIT License
 ```
 
 ---
 
-## ⚙️ Instalación y Uso
+## ⚙️ Installation & Usage
 
-### 1. Clonar el repositorio y preparar el entorno:
+### 1. Clone repository and initialize environment:
 ```bash
 git clone https://github.com/aimarlarriba/MNIST_Clustering.git
 cd MNIST_Clustering
 
-# Crear entorno virtual
+# Create virtual environment
 python -m venv venv
 
-# Activar entorno virtual
-# En Windows:
+# Activate on Windows:
 venv\Scripts\activate
-# En Linux/macOS:
+# Activate on Linux/macOS:
 source venv/bin/activate
 
-# Instalar dependencias
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Ejecutar el Notebook de Experimentación:
+### 2. Launch the Research Notebook:
 ```bash
 jupyter notebook notebook.ipynb
 ```
 
 ---
 
-## 👥 Contexto Académico
+## 👥 Academic Context & Attribution
 
-Desarrollado originalmente como trabajo experimental para la asignatura de **Minería de Datos** en la **Universidad del País Vasco (UPV/EHU)**. 
+Originally developed as an experimental project for the **Data Mining** course at the **University of the Basque Country (UPV/EHU)**.
 
-Consolidado, estructurado y documentado por **[Aimar Larriba](https://github.com/aimarlarriba)** como portfolio de aprendizaje no supervisado y análisis de espacios latentes.
+Refactored, benchmarked, and documented by **[Aimar Larriba](https://github.com/aimarlarriba)** as a portfolio piece in unsupervised learning and latent space representation analysis.
 
 ---
 
-## ⚖️ Licencia
+## ⚖️ License
 
-Distribuido bajo la Licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+Distributed under the **MIT** License. See [LICENSE](LICENSE) for more details.
